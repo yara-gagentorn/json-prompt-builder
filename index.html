@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON Prompt Builder</title>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 1rem; }
+    input, select, textarea { width: 100%; padding: 0.5rem; margin-top: 0.25rem; }
+    button { margin-top: 1.5rem; padding: 0.75rem 1.5rem; }
+    pre { background: #f0f0f0; padding: 1rem; margin-top: 1rem; white-space: pre-wrap; }
+  </style>
+</head>
+<body x-data="promptBuilder()">
+  <h1>🎬 JSON Prompt Builder</h1>
+
+  <label>
+    Camera Movement
+    <input x-model="form.camera" placeholder="e.g. slow pan, dolly zoom" />
+  </label>
+
+  <label>
+    Color Scheme
+    <input x-model="form.color" placeholder="e.g. pastel, neon, monochrome" />
+  </label>
+
+  <label>
+    Style
+    <select x-model="form.style">
+      <option value="">-- Choose a style --</option>
+      <option>Cyberpunk</option>
+      <option>Studio Ghibli</option>
+      <option>Impressionist</option>
+      <option>Minimalist</option>
+    </select>
+  </label>
+
+  <label>
+    Text Overlay
+    <input x-model="form.text" placeholder="e.g. 'You are radiant'" />
+  </label>
+
+  <button @click="generateJSON()">Generate JSON</button>
+
+  <pre x-text="output"></pre>
+
+  <script>
+    function promptBuilder() {
+      return {
+        form: {
+          camera: '',
+          color: '',
+          style: '',
+          text: ''
+        },
+        output: '',
+        generateJSON() {
+          this.output = JSON.stringify(this.form, null, 2);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
