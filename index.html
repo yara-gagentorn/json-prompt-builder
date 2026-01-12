@@ -14,12 +14,38 @@
   </style>
 </head>
 <body x-data="promptBuilder()">
+
   <h1>🎬 JSON Prompt Builder</h1>
 
+  <label>
+  Mode
+  <select x-model="mode">
+    <option value="image">Image</option>
+    <option value="video">Video</option>
+  </select>
+</label>
+
+<p>Current mode: <strong x-text="mode"></strong></p>
+
+<!--only video fields-->
+<div x-show="mode === 'video'" x-transition>
   <label>
     Camera Movement
     <input x-model="form.camera" placeholder="e.g. slow pan, dolly zoom" />
   </label>
+</div>
+<!--end of only video fields-->
+
+  <h2>Background</h2>
+  <label>
+    Color
+    <input x-model="form.background.color" placeholder="e.g. soft lavender" />
+  </label>
+
+  <label>
+    Theme
+    <input x-model="form.background.theme" placeholder="e.g. celestial night" />
+  </label> 
 
   <label>
     Color Scheme
@@ -48,19 +74,42 @@
 
   <script>
     function promptBuilder() {
-      return {
-        form: {
-          camera: '',
-          color: '',
-          style: '',
-          text: ''
+  return {
+    mode: 'image', 
+    form: {
+      background:{
+        color:'',
+        theme:''
+      },
+      camera: '',
+      color: '',
+      style: '',
+      text: '',
+      action: '',
+      duration: ''
+    },
+    output: '',
+    generateJSON() {
+      const base = {
+        background: {
+          color: this.form.background.color,
+          theme: this.form.background.theme
         },
-        output: '',
-        generateJSON() {
-          this.output = JSON.stringify(this.form, null, 2);
-        }
+        color: this.form.color,
+        style: this.form.style,
+        text: this.form.text
+      };
+
+      if (this.mode === 'video') {
+        base.camera_movement = this.form.camera;
+        base.action = this.form.action;
+        base.duration = this.form.duration;
       }
+
+      this.output = JSON.stringify(base, null, 2);
     }
+  }
+}
   </script>
 </body>
 </html>
