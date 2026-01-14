@@ -7,10 +7,13 @@
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <style>
     body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    label { display: block; margin-top: 1rem; }
-    input, select, textarea { width: 100%; padding: 0.5rem; margin-top: 0.25rem; }
-    button { margin-top: 1.5rem; padding: 0.75rem 1.5rem; }
-    pre { background: #f0f0f0; padding: 1rem; margin-top: 1rem; white-space: pre-wrap; }
+    label { display: flex; align-items: center; margin-bottom: 0.5rem; font-weight: bold; }
+    input,select {flex: 1; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px;margin-left: 5px;} 
+    button { margin-top: 1.5rem; padding: 0.75rem 1.5rem; border: 1px solid #ccc; border-radius: 4px;margin-left: 5px;}
+    pre { background: #f0f0f0; padding: 1rem; margin-top: 1rem; white-space: pre-wrap; 
+    }
+    .sub-category {margin-left: 20px;}
+    h3 {}
   </style>
 </head>
 <body x-data="promptBuilder()">
@@ -36,23 +39,82 @@
 </div>
 <!--end of only video fields-->
 
-  <h2>Background</h2>
-  <label>
-    Color
-    <input x-model="form.background.color" placeholder="e.g. soft lavender" />
-  </label>
+  <h3>scene:</h3>
+    <div class="sub-category">
+      <label>
+        location: <input x-model="form.scene.location" placeholder="" />
+      </label>
 
-  <label>
-    Theme
-    <input x-model="form.background.theme" placeholder="e.g. celestial night" />
-  </label> 
+      <label>
+        weather:
+        <input x-model="form.scene.weather" placeholder="" />
+      </label> 
 
-  <label>
-    Color Scheme
-    <input x-model="form.color" placeholder="e.g. pastel, neon, monochrome" />
-  </label>
+      <label>
+        time of day:
+        <input x-model="form.scene.time_of_day" placeholder="" />
+      </label>
 
-  <label>
+      <label>
+        season:
+        <input x-model="form.scene.season" placeholder="" />
+      </label>
+    </div>
+
+  <h3>foreground:</h3>
+    <div class="sub-category">
+      <label>
+        object: <input x-model="form.foreground.object" placeholder="" />
+      </label>
+      <label>
+        items: <input x-model="form.foreground.items" placeholder="" />
+      </label>
+    </div>
+
+  <h3>background:</h3>
+    <div class="sub-category">
+      <label>
+        elements: <input x-model="form.background.elements" placeholder="" />
+      </label>
+      <label>
+        visibility: <input x-model="form.background.visibility" placeholder="" />
+      </label>
+    </div>
+
+    <h3>atmosphere:</h3>
+      <div class="sub-category">
+        <label>
+          mood: <input x-model="form.atmosphere.mood" placeholder="" />
+        </label>
+        <label>
+          contrast: <input x-model="form.atmosphere.contrast" placeholder="" />
+        </label>
+        <label>
+          lighting: <input x-model="form.atmosphere.lighting" placeholder="" />
+        </label>
+      </div>
+
+    <h3>style:</h3>
+      <div class="sub-category">
+        <label>
+          visual style: <input x-model="form.style.visual_style" placeholder="" />
+        </label>
+        <label>
+          color palette: <input x-model="form.style.color_palette" placeholder="" />
+        </label>
+      </div>
+
+    <h3>phrase:</h3>
+      <div class="sub-category">
+        <label>
+          text: <input x-model="form.style.text" placeholder="" />
+        </label>
+        <label>
+          placement: <input x-model="form.style.placement" placeholder="" />
+        </label>
+      </div>
+
+  <!--label>
     Style
     <select x-model="form.style">
       <option value="">-- Choose a style --</option>
@@ -61,54 +123,106 @@
       <option>Impressionist</option>
       <option>Minimalist</option>
     </select>
-  </label>
-
-  <label>
-    Text Overlay
-    <input x-model="form.text" placeholder="e.g. 'You are radiant'" />
-  </label>
+  </label-->
 
   <button @click="generateJSON()">Generate JSON</button>
 
   <pre x-text="output"></pre>
 
+  <button @click="copyToClipboard()" x-show="output" style="margin-top: 0.5rem;">
+  📋 Copy JSON to Clipboard
+  </button>
+  <div x-show="copied" x-transition style="color: green; margin-top: 0.25rem;">
+  ✅ Copied!
+</div>
+
   <script>
     function promptBuilder() {
+      copied: false
   return {
-    mode: 'image', 
+    copyToClipboard() {
+  navigator.clipboard.writeText(this.output)
+    .then(() => {
+      this.copied = true;
+      setTimeout(() => this.copied = false, 1500);
+    })
+    .catch(err => console.error('Copy failed:', err));
+},
+
+
+
+    mode: 'image',
     form: {
-      background:{
-        color:'',
-        theme:''
-      },
       camera: '',
-      color: '',
-      style: '',
-      text: '',
-      action: '',
-      duration: ''
+      scene: {
+        location: '',
+        weather: '',
+        time_of_day: '',
+        season: ''
+      },
+      foreground: {
+        object: '',
+        items: ''
+      },
+      background: {
+        elements: '',
+        visibility: ''
+      },
+      atmosphere: {
+        mood: '',
+        contrast: '',
+        lighting: ''
+      },
+      style: {
+        visual_style: '',
+        color_palette: '',
+        text: '',
+        placement: ''
+      }
     },
     output: '',
-    generateJSON() {
-      const base = {
-        background: {
-          color: this.form.background.color,
-          theme: this.form.background.theme
-        },
-        color: this.form.color,
-        style: this.form.style,
-        text: this.form.text
-      };
 
-      if (this.mode === 'video') {
+    generateJSON() {
+      const base = { mode: this.mode };
+
+      // Only include if filled
+      if (this.mode === 'video' && this.form.camera) {
         base.camera_movement = this.form.camera;
-        base.action = this.form.action;
-        base.duration = this.form.duration;
       }
+
+      const scene = {};
+      if (this.form.scene.location) scene.location = this.form.scene.location;
+      if (this.form.scene.weather) scene.weather = this.form.scene.weather;
+      if (this.form.scene.time_of_day) scene.time_of_day = this.form.scene.time_of_day;
+      if (this.form.scene.season) scene.season = this.form.scene.season;
+      if (Object.keys(scene).length) base.scene = scene;
+
+      const foreground = {};
+      if (this.form.foreground.object) foreground.object = this.form.foreground.object;
+      if (this.form.foreground.items) foreground.items = this.form.foreground.items;
+      if (Object.keys(foreground).length) base.foreground = foreground;
+
+      const background = {};
+      if (this.form.background.elements) background.elements = this.form.background.elements;
+      if (this.form.background.visibility) background.visibility = this.form.background.visibility;
+      if (Object.keys(background).length) base.background = background;
+
+      const atmosphere = {};
+      if (this.form.atmosphere.mood) atmosphere.mood = this.form.atmosphere.mood;
+      if (this.form.atmosphere.contrast) atmosphere.contrast = this.form.atmosphere.contrast;
+      if (this.form.atmosphere.lighting) atmosphere.lighting = this.form.atmosphere.lighting;
+      if (Object.keys(atmosphere).length) base.atmosphere = atmosphere;
+
+      const style = {};
+      if (this.form.style.visual_style) style.visual_style = this.form.style.visual_style;
+      if (this.form.style.color_palette) style.color_palette = this.form.style.color_palette;
+      if (this.form.style.text) style.text = this.form.style.text;
+      if (this.form.style.placement) style.placement = this.form.style.placement;
+      if (Object.keys(style).length) base.style = style;
 
       this.output = JSON.stringify(base, null, 2);
     }
-  }
+  };
 }
   </script>
 </body>

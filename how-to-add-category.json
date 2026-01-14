@@ -1,0 +1,173 @@
+## ✅ Steps to Add a New Category to My JSON Prompt Builder
+
+### 1. ✍️ Decide the Category Name and Structure
+- Choose a name (e.g. `lighting`, `scene`, `emotion`)
+- Decide if it’s:
+  - A **simple field** (e.g. `"lighting": "soft glow"`)
+  - A **nested object** (e.g. `"scene": { "location": "café", "weather": "rainy" }`)
+
+---
+
+### 2. 🧠 Update the `form` Object in `promptBuilder()`
+
+In your JavaScript:
+
+```js
+form: {
+  // For simple field
+  lighting: '',
+
+  // For nested field
+  scene: {
+    location: '',
+    weather: ''
+  }
+}
+```
+
+---
+
+### 3. 🧩 Add HTML Inputs with `x-model`
+
+#### For simple fields:
+
+```html
+<label>
+  Lighting
+  <input x-model="form.lighting" placeholder="e.g. soft golden hour" />
+</label>
+```
+
+#### For nested fields:
+
+```html
+<h2>Scene</h2>
+<label>
+  Location
+  <input x-model="form.scene.location" placeholder="e.g. café by the window" />
+</label>
+
+<label>
+  Weather
+  <input x-model="form.scene.weather" placeholder="e.g. rainy" />
+</label>
+```
+
+---
+
+### 4. 🧪 Update `generateJSON()` to Include the New Category
+
+#### For simple fields:
+
+```js
+base.lighting = this.form.lighting;
+```
+
+#### For nested fields:
+
+```js
+base.scene = {
+  location: this.form.scene.location,
+  weather: this.form.scene.weather
+};
+```
+
+---
+
+### 5. ✅ Test It
+- Fill in the new fields
+- Click “Generate JSON”
+- Confirm the new category appears correctly in the output
+
+---
+
+### 6. (Optional) 🎛️ Add Conditional Display
+
+If you want to toggle the section on/off:
+
+```html
+<label>
+  <input type="checkbox" x-model="showScene" />
+  Include Scene
+</label>
+
+<div x-show="showScene">
+  <!-- scene fields here -->
+</div>
+```
+
+And in your Alpine data:
+
+```js
+showScene: false,
+```
+
+
+{
+  "scene": {
+    "location": "café by the window",
+    "weather": "rainy",
+    "time_of_day": "daytime",
+    "season": "autumn"
+  },
+  "foreground": {
+    "object": "table",
+    "items": [
+      {
+        "type": "mug",
+        "content": "hot chocolate with marshmallows",
+        "text_on_object": "everything is working out for me"
+      }
+    ]
+  },
+  "background": {
+    "elements": ["rainy street", "people walking with umbrellas"],
+    "visibility": "through window"
+  },
+  "atmosphere": {
+    "mood": "cozy",
+    "contrast": "warm inside, cold and rainy outside",
+    "lighting": "soft, warm indoor light"
+  },
+  "style": {
+    "visual_style": "illustrative realism",
+    "color_palette": "warm browns, soft greys, muted pastels"
+  },
+  "text_overlay": null
+}
+
+
+
+        // for simple fields
+        // if (this.form.###) base.### = this.form.###
+        //
+        // for nested fields
+        //---------------------------------------------------------------------
+        // const CATEGORY_NAME = {};
+        // if (this.form.CATEGORY_NAME.###) CATEGORY_NAME.### = this.form.CATEGORY_NAME.###
+        // if (this.form.CATEGORY_NAME.###) CATEGORY_NAME.### = this.form.CATEGORY_NAME.###
+        // if (this.form.CATEGORY_NAME.###) CATEGORY_NAME.### = this.form.CATEGORY_NAME.###
+        // ...
+        // if (Object.keys(CATEGORY_NAME).length) base.CATEGORY_NAME = CATEGORY_NAME
+        //--------------------------------------------------------------------
+
+
+copyToClipboard() {
+  navigator.clipboard.writeText(this.output)
+    .then(() => alert('Copied to clipboard!'))
+    .catch(err => alert('Failed to copy: ' + err));
+      },
+
+
+      {
+  "mode": "image",
+  "foreground": {
+    "items": "asdasd"
+  },
+  "background": {
+    "elements": "asdasd"
+  },
+  "atmosphere": {
+    "contrast": "sdasda"
+  }
+}
